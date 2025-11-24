@@ -1,5 +1,5 @@
 const express = require('express')
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const cors = require('cors')
 const app = express()
 require('dotenv').config()
@@ -24,7 +24,7 @@ const client = new MongoClient(uri, {
 
 async function run() {
     try {
-        await client.connect()
+        // await client.connect()
         const database = client.db("productsdb");
         const productsCollection = database.collection("products")
 
@@ -43,7 +43,15 @@ async function run() {
             res.send(result)
         })
 
-        await client.db("admin").command({ ping: 1 });
+        // api delete
+        app.delete('/products/:id',async (req,res)=>{
+            const id = req.params.id;
+            const quarry = {_id: new ObjectId(id)}
+            const result = await productsCollection.deleteOne(quarry)
+            res.send(result)
+        })
+
+        // await client.db("admin").command({ ping: 1 });
         console.log("Pinged your deployment. You successfully connected to MongoDB!");
     }
     finally {
