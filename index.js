@@ -35,6 +35,54 @@ async function run() {
             res.send(result)
         })
 
+        // add product
+
+
+        app.post('/products', async (req, res) => {
+            try {
+                const newProduct = req.body;
+
+
+                if (!newProduct.name || !newProduct.price) {
+                    return res.status(400).send({
+                        success: false,
+                        message: "Name and price are required!"
+                    });
+                }
+
+
+                const result = await productsCollection.insertOne({
+                    name: newProduct.name,
+                    shortDescription: newProduct.shortDescription || "",
+                    description: newProduct.description || "",
+                    price: Number(newProduct.price),
+                    image: newProduct.image || "https://via.placeholder.com/400x300.png?text=No+Image",
+                    createdAt: new Date(),
+                });
+
+
+                res.status(201).send({
+                    success: true,
+                    message: "Product added successfully!",
+                    insertedId: result.insertedId,
+                    product: {
+                        _id: result.insertedId,
+                        ...newProduct,
+                        price: Number(newProduct.price),
+                        createdAt: new Date(),
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error adding product:", error);
+                res.status(500).send({
+                    success: false,
+                    message: "Failed to add product",
+                    error: error.message
+                });
+            }
+        });
+
         // api get
         app.get('/products', async (req, res) => {
             const cursor = productsCollection.find()
@@ -58,9 +106,9 @@ async function run() {
         })
 
         // app id
-        app.get("/products/:id",async (req,res)=>{
+        app.get("/products/:id", async (req, res) => {
             const id = req.params.id;
-            const query = {_id: new ObjectId(id)}
+            const query = { _id: new ObjectId(id) }
             const product = await productsCollection.findOne(query)
             res.send(product)
         })
