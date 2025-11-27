@@ -28,12 +28,12 @@ async function run() {
         const productsCollection = database.collection("products")
 
 
-        // add api
-        app.post('/products', async (req, res) => {
-            const newProduct = req.body
-            const result = await productsCollection.insertMany(newProduct)
-            res.send(result)
-        })
+        // // add api
+        // app.post('/products', async (req, res) => {
+        //     const newProduct = req.body
+        //     const result = await productsCollection.insertMany(newProduct)
+        //     res.send(result)
+        // })
 
         // add product
 
