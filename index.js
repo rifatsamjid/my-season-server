@@ -51,10 +51,10 @@ async function run() {
         })
 
         // fresh products
-        app.get('/recent-products', async (req, res) => {
+        app.get('/products/recent-products', async (req, res) => {
             const cursor = productsCollection.find().sort({ date: -1 }).limit(6)
             const result = await cursor.toArray()
-            res.send(result);
+            res.send(result || []);
         })
 
         // await client.db("admin").command({ ping: 1 });
