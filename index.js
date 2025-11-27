@@ -28,21 +28,15 @@ async function run() {
         const productsCollection = database.collection("products")
 
 
-        // // add api
-        // app.post('/products', async (req, res) => {
-        //     const newProduct = req.body
-        //     const result = await productsCollection.insertMany(newProduct)
-        //     res.send(result)
-        // })
+        
 
         // add product
-// ADD PRODUCT ROUTE — শুধু এই অংশটা রিপ্লেস করো
 app.post('/products', async (req, res) => {
   try {
     const newProduct = req.body;
 
     if (!newProduct.name || !newProduct.price) {
-      return res.status(400).json({  // ← এখানে .json() করো
+      return res.status(400).json({   করো
         success: false,
         message: "Name and price are required!"
       });
@@ -57,7 +51,7 @@ app.post('/products', async (req, res) => {
       createdAt: new Date(),
     });
 
-    res.status(201).json({  // ← এখানেও .json() করো
+    res.status(201).json({  
       success: true,
       message: "Product added successfully!",
       insertedId: result.insertedId
@@ -65,7 +59,7 @@ app.post('/products', async (req, res) => {
 
   } catch (error) {
     console.error("Error adding product:", error);
-    res.status(500).json({  // ← এখানেও .json()
+    res.status(500).json({  
       success: false,
       message: "Failed to add product"
     });
