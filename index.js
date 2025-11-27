@@ -36,52 +36,41 @@ async function run() {
         // })
 
         // add product
+// ADD PRODUCT ROUTE — শুধু এই অংশটা রিপ্লেস করো
+app.post('/products', async (req, res) => {
+  try {
+    const newProduct = req.body;
 
+    if (!newProduct.name || !newProduct.price) {
+      return res.status(400).json({  // ← এখানে .json() করো
+        success: false,
+        message: "Name and price are required!"
+      });
+    }
 
-        app.post('/products', async (req, res) => {
-            try {
-                const newProduct = req.body;
+    const result = await productsCollection.insertOne({
+      name: newProduct.name.trim(),
+      shortDescription: newProduct.shortDescription?.trim() || "",
+      description: newProduct.description?.trim() || "",
+      price: Number(newProduct.price),
+      image: newProduct.image?.trim() || "https://via.placeholder.com/400x300.png?text=FruitHub",
+      createdAt: new Date(),
+    });
 
+    res.status(201).json({  // ← এখানেও .json() করো
+      success: true,
+      message: "Product added successfully!",
+      insertedId: result.insertedId
+    });
 
-                if (!newProduct.name || !newProduct.price) {
-                    return res.status(400).send({
-                        success: false,
-                        message: "Name and price are required!"
-                    });
-                }
-
-
-                const result = await productsCollection.insertOne({
-                    name: newProduct.name,
-                    shortDescription: newProduct.shortDescription || "",
-                    description: newProduct.description || "",
-                    price: Number(newProduct.price),
-                    image: newProduct.image || "https://via.placeholder.com/400x300.png?text=No+Image",
-                    createdAt: new Date(),
-                });
-
-
-                res.status(201).send({
-                    success: true,
-                    message: "Product added successfully!",
-                    insertedId: result.insertedId,
-                    product: {
-                        _id: result.insertedId,
-                        ...newProduct,
-                        price: Number(newProduct.price),
-                        createdAt: new Date(),
-                    }
-                });
-
-            } catch (error) {
-                console.error("Error adding product:", error);
-                res.status(500).send({
-                    success: false,
-                    message: "Failed to add product",
-                    error: error.message
-                });
-            }
-        });
+  } catch (error) {
+    console.error("Error adding product:", error);
+    res.status(500).json({  // ← এখানেও .json()
+      success: false,
+      message: "Failed to add product"
+    });
+  }
+});
 
         // api get
         app.get('/products', async (req, res) => {
